@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Undervisningsplan — Grundlæggende programmering · DMU</title>
+<meta name="description" content="Komplet tidsplan for grundlæggende programmering: introduktion, Java og databaser.">
+<style>
+  *,*::before,*::after { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; }
+
+  :root {
+    --bg: #faf7f1;
+    --paper: #ffffff;
+    --fg: #1a1a1a;
+    --muted: #6b6b6b;
+    --rule: #e8e2d3;
+    --rule-soft: #efeadd;
+
+    --scratch: #c4451d;
+    --scratch-soft: #fbece4;
+    --java: #1f4f8b;
+    --java-soft: #e6eef7;
+    --sql: #2f6e4a;
+    --sql-soft: #e6f1ea;
+
+    --todo-bg: #f0e9d6;
+    --todo-fg: #6b5418;
+    --todo-mark: #b08824;
+
+    --fkj-bg: #d8e8f7;
+    --fkj-bg-strong: #b1cdee;
+    --fkj-fg: #143966;
+
+    --yellow-bg: #fff3c4;
+    --yellow-bg-strong: #fde58a;
+    --yellow-fg: #5a4218;
+    --yellow-rule: #e8d574;
+
+    --max: 1180px;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Helvetica, Arial, system-ui, sans-serif;
+    font-size: 16px;
+    line-height: 1.55;
+    color: var(--fg);
+    background: var(--bg);
+    padding: 48px 24px 80px;
+  }
+
+  .wrap {
+    max-width: var(--max);
+    margin: 0 auto;
+  }
+
+  /* ------- Header ------- */
+  header.page {
+    margin-bottom: 32px;
+    padding-bottom: 28px;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .eyebrow {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+
+  h1 {
+    font-size: clamp(28px, 4.2vw, 42px);
+    line-height: 1.1;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin: 0 0 12px;
+    color: var(--fg);
+  }
+
+  .lede {
+    max-width: 64ch;
+    color: var(--muted);
+    font-size: 17px;
+    line-height: 1.55;
+    margin: 0;
+  }
+
+  .meta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+    margin-top: 22px;
+    font-size: 14px;
+    color: var(--muted);
+  }
+  .meta-row strong { color: var(--fg); font-weight: 600; }
+
+  /* ------- Section Nav ------- */
+  nav.toc {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 28px 0 40px;
+    padding: 16px 18px;
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 14px;
+    align-items: center;
+  }
+  nav.toc .label {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-right: 4px;
+  }
+  nav.toc a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    transition: transform 160ms ease, box-shadow 160ms ease;
+    border: 1px solid transparent;
+  }
+  nav.toc a::before {
+    content: "";
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+    background: currentColor;
+    opacity: 0.7;
+  }
+  nav.toc a.theme-scratch { background: var(--scratch-soft); color: var(--scratch); }
+  nav.toc a.theme-java { background: var(--java-soft); color: var(--java); }
+  nav.toc a.theme-sql { background: var(--sql-soft); color: var(--sql); }
+  nav.toc a:hover { transform: translateY(-1px); box-shadow: 0 4px 10px rgba(0,0,0,0.08); }
+
+  /* ------- Section ------- */
+  section.tema { margin-bottom: 48px; }
+
+  .tema-head {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 16px;
+    align-items: baseline;
+    margin-bottom: 8px;
+  }
+  h2 {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  h2::before {
+    content: "";
+    width: 14px;
+    height: 14px;
+    border-radius: 4px;
+    background: var(--muted);
+  }
+  section.theme-scratch h2::before { background: var(--scratch); }
+  section.theme-java h2::before { background: var(--java); }
+  section.theme-sql h2::before { background: var(--sql); }
+
+  .tema-meta {
+    font-size: 14px;
+    color: var(--muted);
+    margin: 0 0 18px;
+  }
+
+  /* ------- Table ------- */
+  .table-wrap {
+    overflow-x: auto;
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 14px;
+    box-shadow: 0 1px 0 rgba(0,0,0,0.02);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14.5px;
+    min-width: 720px;
+  }
+
+  thead th {
+    text-align: left;
+    padding: 14px 18px;
+    background: #f5f0e3;
+    font-weight: 700;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #574c33;
+    border-bottom: 1px solid var(--rule);
+    white-space: nowrap;
+  }
+
+  tbody td {
+    padding: 18px;
+    border-bottom: 1px solid var(--rule-soft);
+    vertical-align: top;
+    background: var(--paper);
+  }
+
+  tbody tr:last-child td { border-bottom: none; }
+
+  section.theme-scratch tbody td { border-left: 3px solid var(--scratch); }
+  section.theme-java tbody td { border-left: 3px solid var(--java); }
+  section.theme-sql tbody td { border-left: 3px solid var(--sql); }
+
+  tbody td:first-child { padding-left: 18px; }
+
+  tbody td.uge {
+    font-weight: 700;
+    font-size: 17px;
+    white-space: nowrap;
+    min-width: 90px;
+  }
+  tbody td.lek {
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+    color: var(--muted);
+    min-width: 70px;
+  }
+
+  /* Stack of paragraphs inside a cell */
+  .stack > * + * { margin-top: 10px; }
+  .stack .label {
+    display: block;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+
+  /* Day list */
+  ul.days {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  ul.days li {
+    padding: 8px 0;
+    border-bottom: 1px dashed var(--rule);
+  }
+  ul.days li:last-child { border-bottom: none; }
+  ul.days strong {
+    display: inline-block;
+    min-width: 80px;
+    font-weight: 700;
+    color: var(--java);
+  }
+
+  /* Links */
+  a {
+    color: var(--java);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-thickness: 1px;
+    word-break: break-word;
+  }
+  a:hover { text-decoration-thickness: 2px; }
+
+  /* TODO rows */
+  tr.todo td {
+    background: repeating-linear-gradient(
+      45deg,
+      var(--todo-bg),
+      var(--todo-bg) 6px,
+      #ecdfb0 6px,
+      #ecdfb0 12px
+    );
+    color: var(--todo-fg);
+  }
+  tr.todo td.uge { color: var(--todo-mark); }
+
+  /* FKJ-marked rows (Flemming — underviser ansvarlig) */
+  tr.fkj-row td {
+    background: var(--fkj-bg);
+    color: var(--fkj-fg);
+  }
+  tr.fkj-row td.uge {
+    background: var(--fkj-bg-strong);
+    color: var(--fkj-fg);
+    font-weight: 700;
+  }
+
+  /* Purple modifier — used by special weeks (currently uge 41-46) */
+  /* Object-oriented-style variant: extends FKJ base style with a new "color state" */
+  tr.fkj-row.purple td {
+    background: #ece0fb;
+    color: #3a1f63;
+    border-left-color: #b89ee2;
+  }
+  tr.fkj-row.purple td.uge {
+    background: #d3b9f1;
+    color: #3a1f63;
+  }
+
+  /* Yellow-highlighted rows (uge 37–39 — første del af forløbet) */
+  tr.yellow-row td {
+    background: var(--yellow-bg);
+    color: var(--yellow-fg);
+    border-left-color: var(--yellow-rule);
+  }
+  tr.yellow-row td.uge {
+    background: var(--yellow-bg-strong);
+    color: var(--yellow-fg);
+    font-weight: 700;
+  }
+
+  .pill-todo {
+    display: inline-block;
+    margin-left: 8px;
+    padding: 2px 8px;
+    background: var(--todo-mark);
+    color: #fff;
+    border-radius: 4px;
+    font-size: 10.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    vertical-align: middle;
+  }
+
+  /* Footer */
+  footer.page {
+    margin-top: 56px;
+    padding-top: 24px;
+    border-top: 1px solid var(--rule);
+    color: var(--muted);
+    font-size: 13px;
+  }
+  footer.page .cr { font-weight: 600; color: var(--fg); }
+
+  /* ------- Responsive ------- */
+  @media (max-width: 760px) {
+    body { padding: 28px 14px 60px; }
+    nav.toc { padding: 12px 14px; }
+    .table-wrap { border-radius: 10px; }
+
+    /* On narrow screens, transform each row into a stacked card */
+    table { min-width: 0; font-size: 14px; }
+    thead { display: none; }
+
+    table, tbody, tr, td { display: block; width: 100%; }
+
+    tr {
+      margin-bottom: 16px;
+      border: 1px solid var(--rule);
+      border-radius: 12px;
+      background: var(--paper);
+      overflow: hidden;
+    }
+    tr:last-child { margin-bottom: 0; }
+
+    tr.fkj-row {
+      background: var(--fkj-bg);
+      border-color: var(--fkj-fg);
+    }
+    tr.fkj-row td { background: transparent; }
+    tr.fkj-row td.uge {
+      background: var(--fkj-bg-strong);
+      color: var(--fkj-fg);
+      border-bottom-color: var(--fkj-fg);
+    }
+
+    /* Purple modifier — mobile card uses white body + purple headline */
+    tr.fkj-row.purple {
+      background: var(--paper);
+      border-color: var(--rule);
+    }
+    tr.fkj-row.purple td { background: transparent; }
+    tr.fkj-row.purple td.uge {
+      background: #d3b9f1;
+      color: #3a1f63;
+      border-bottom-color: #3a1f63;
+    }
+
+    tr.yellow-row {
+      background: var(--paper);
+      border-color: var(--rule);
+    }
+    tr.yellow-row td { background: transparent; }
+    tr.yellow-row td.uge {
+      background: var(--yellow-bg-strong);
+      color: var(--yellow-fg);
+      border-bottom-color: var(--yellow-fg);
+    }
+
+    td {
+      border-bottom: 1px solid var(--rule-soft);
+      padding: 12px 14px;
+      border-left: none !important;
+    }
+    td:last-child { border-bottom: none; }
+
+    td::before {
+      content: attr(data-label);
+      display: block;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    td.uge {
+      font-size: 18px;
+      padding: 14px;
+      border-bottom: 2px solid currentColor;
+    }
+    section.theme-scratch td.uge { background: var(--scratch-soft); color: var(--scratch); border-bottom-color: var(--scratch); }
+    section.theme-java td.uge { background: var(--java-soft); color: var(--java); border-bottom-color: var(--java); }
+    section.theme-sql td.uge { background: var(--sql-soft); color: var(--sql); border-bottom-color: var(--sql); }
+  }
+
+  @media print {
+    body { background: #fff; padding: 0; }
+    nav.toc { display: none; }
+    .table-wrap { border: 1px solid #ccc; box-shadow: none; }
+    section.tema { page-break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="page">
+    <p class="eyebrow">DMU · Efterår 2026</p>
+    <h1>Undervisningsplan — Grundlæggende programmering</h1>
+    <p class="lede">
+      Komplet tidsplan for forløbet. Tre temaer spredt over syv uger: en blød start i Scratch,
+      herefter Java fra hardware til datatyper, og til sidst databaser og SQL.
+    </p>
+    <div class="meta-row">
+      <span><strong>7 uger</strong> · 37, 38, 39, 40, 47, 48, 49</span>
+      <span><strong>3 temaer</strong> · Scratch, Java, SQL</span>
+      <span><strong>1 fil</strong> · ingen eksterne afhængigheder</span>
+    </div>
+
+    <nav class="toc" aria-label="Spring til tema">
+      <span class="label">Hop til</span>
+      <a class="theme-scratch" href="#tema-1">1 · Introduktion (uge 37)</a>
+      <a class="theme-java" href="#tema-2">2 · Java &amp; programmering (uge 38–40)</a>
+      <a class="theme-sql" href="#tema-3">3 · Databaser &amp; SQL (uge 47–49)</a>
+    </nav>
+  </header>
+
+  <!-- ===== Tema 1 ===== -->
+  <section class="tema theme-scratch" id="tema-1">
+    <div class="tema-head">
+      <h2>Tema 1 — Introduktion til programmering</h2>
+    </div>
+    <p class="tema-meta">Uge 37 · 7 lektioner · algoritmetænkning med Scratch.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">Uge</th>
+            <th scope="col">Antal lektioner</th>
+            <th scope="col">Emner</th>
+            <th scope="col">Litteratur / materialer</th>
+            <th scope="col">Opgaver / cases / projekter</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="yellow-row">
+            <td class="uge" data-label="Uge">Uge 37</td>
+            <td class="lek" data-label="Antal lektioner">7</td>
+            <td data-label="Emner">Introduktion til programmering, herunder programmering og algoritmer.</td>
+            <td data-label="Litteratur / materialer">
+              Introduktion til Scratch<br>
+              <a href="https://www.fkj.dk/dcgwbook/grundlaeggende_programmering/algoritmer/algoritmer.htm" target="_blank" rel="noopener">fkj.dk/dcgwbook/…/algoritmer/algoritmer.htm</a>
+            </td>
+            <td data-label="Opgaver / cases / projekter">Scratch-opgave med AI-støtte — indsend beviser i programmering.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ===== Tema 2 ===== -->
+  <section class="tema theme-java" id="tema-2">
+    <div class="tema-head">
+      <h2>Tema 2 — Java &amp; programmering</h2>
+    </div>
+    <p class="tema-meta">Uge 38–40 · fra computer-hardware til udtryk, løkker og datatyper.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">Uge</th>
+            <th scope="col">Antal lektioner</th>
+            <th scope="col">Emner</th>
+            <th scope="col">Litteratur / materialer</th>
+            <th scope="col">Opgaver / cases / projekter</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="yellow-row">
+            <td class="uge" data-label="Uge">Uge 38</td>
+            <td class="lek" data-label="Antal lektioner">7</td>
+            <td data-label="Emner">
+              Introduktion til computer-hardware og Java IDE.<br>
+              Introduktion til datatyper.
+            </td>
+            <td data-label="Litteratur / materialer">
+              DocJava<br>
+              <a href="https://www.fkj.dk/dcgwbook/grundlaeggende_programmering/programmering/programmering" target="_blank" rel="noopener">fkj.dk/dcgwbook/…/programmering/programmering</a>
+            </td>
+            <td data-label="Opgaver / cases / projekter">
+              <ul class="days">
+                <li><strong>Mandag:</strong> Øvelser — jshell</li>
+                <li><strong>Tirsdag:</strong> Bits/bytes-opgave fra mmd + Java IDE og datatype-introduktion</li>
+                <li><strong>Torsdag:</strong> Challenge Pyramid</li>
+              </ul>
+            </td>
+          </tr>
+          <tr class="yellow-row">
+            <td class="uge" data-label="Uge">Uge 39</td>
+            <td class="lek" data-label="Antal lektioner">5</td>
+            <td data-label="Emner">
+              Udskriv (expressions), if/else-sætninger og while-løkker i Java.<br>
+              Introduktion til datatype i Java.<br>
+              Studio start-up.
+            </td>
+            <td data-label="Litteratur / materialer">DocJava — selection, iteration og conditional.</td>
+            <td data-label="Opgaver / cases / projekter">Java-øvelser med betingelser, løkker og arbejde med datatyper.</td>
+          </tr>
+          <tr class="yellow-row">
+            <td class="uge" data-label="Uge">Uge 40</td>
+            <td class="lek" data-label="Antal lektioner">—</td>
+            <td data-label="Emner">—</td>
+            <td data-label="Litteratur / materialer">—</td>
+            <td data-label="Opgaver / cases / projekter">—</td>
+          </tr>
+          <tr class="fkj-row purple">
+            <td class="uge" data-label="Uge">Uge 41-46</td>
+            <td class="lek" data-label="Antal lektioner">7</td>
+            <td data-label="Emner">FKJ (Flemming)</td>
+            <td data-label="Litteratur / materialer">—</td>
+            <td data-label="Opgaver / cases / projekter">—</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ===== Tema 3 ===== -->
+  <section class="tema theme-sql" id="tema-3">
+    <div class="tema-head">
+      <h2>Tema 3 — Databaser &amp; SQL</h2>
+    </div>
+    <p class="tema-meta">Uge 47–49 · modeller, forespørgsler og arbejde med data.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">Uge</th>
+            <th scope="col">Antal lektioner</th>
+            <th scope="col">Emner</th>
+            <th scope="col">Litteratur / materialer</th>
+            <th scope="col">Opgaver / cases / projekter</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="uge" data-label="Uge">Uge 47</td>
+            <td class="lek" data-label="Antal lektioner">7</td>
+            <td data-label="Emner">Database</td>
+            <td data-label="Litteratur / materialer">—</td>
+            <td data-label="Opgaver / cases / projekter">—</td>
+          </tr>
+          <tr>
+            <td class="uge" data-label="Uge">Uge 48</td>
+            <td class="lek" data-label="Antal lektioner">—</td>
+            <td data-label="Emner">Database</td>
+            <td data-label="Litteratur / materialer">—</td>
+            <td data-label="Opgaver / cases / projekter">—</td>
+          </tr>
+          <tr class="todo">
+            <td class="uge" data-label="Uge">Uge 49 <span class="pill-todo">Mangler indhold</span></td>
+            <td class="lek" data-label="Antal lektioner">—</td>
+            <td data-label="Emner">—</td>
+            <td data-label="Litteratur / materialer">—</td>
+            <td data-label="Opgaver / cases / projekter">—</td>
+          </tr>
+          <tr class="fkj-row purple">
+            <td class="uge" data-label="Uge">Uge 50</td>
+            <td class="lek" data-label="Antal lektioner">—</td>
+            <td data-label="Emner">FKJ (Flemming)</td>
+            <td data-label="Litteratur / materialer">—</td>
+            <td data-label="Opgaver / cases / projekter">—</td>
+          </tr>
+          <tr class="fkj-row purple">
+            <td class="uge" data-label="Uge">Uge 51</td>
+            <td class="lek" data-label="Antal lektioner">—</td>
+            <td data-label="Emner">FKJ (Flemming)</td>
+            <td data-label="Litteratur / materialer">—</td>
+            <td data-label="Opgaver / cases / projekter">—</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <footer class="page">
+    <span class="cr">DMU</span> · Grundlæggende programmering · Efterår 2026
+    &nbsp;·&nbsp;
+    <a href="https://www.fkj.dk/dcgwbook/grundlaeggende_programmering/" target="_blank" rel="noopener">fkj.dk — grundlæggende programmering</a>
+  </footer>
+
+</div>
+</body>
+</html>
