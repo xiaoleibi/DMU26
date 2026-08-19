@@ -7,3 +7,5 @@ Selve tidsplanen ligger i `index.html` — åbn den direkte, eller se den via
 GitHub Pages når de er slået til.
 
 public link https://xiaoleibi.github.io/DMU26/
+
+note:added java code in src folder
