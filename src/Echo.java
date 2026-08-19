@@ -9,6 +9,7 @@ public class Echo {
         Scanner scan = new Scanner(System.in);
 
         System.out.println("Enter a line of text:");
+        // message = scan.next(); next() reads only the first word of input as a token, so we use nextLine() instead to read the entire line of input.
 
         message = scan.nextLine();
 
