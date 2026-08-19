@@ -34,5 +34,6 @@ public class Average {
             DecimalFormat fmt = new DecimalFormat("0.###");
             System.out.println("The average is " + fmt.format(average));
         }
+        scan.close(); // close Scanner
     }
 }

@@ -13,5 +13,6 @@ public class Echo {
         message = scan.nextLine();
 
         System.out.println("You entered: \"" + message + "\"");
+        scan.close(); // close Scanner
     }
 }
