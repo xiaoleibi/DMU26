@@ -1,5 +1,3 @@
-package javap;
-
 import java.util.Scanner; // program uses class Scanner
 
 public class Comparison {
@@ -7,6 +5,7 @@ public class Comparison {
    public static void main(String[] args) {
       // create Scanner to obtain input from command line
       Scanner input = new Scanner(System.in);
+      
 
       System.out.print("Enter first integer: "); // prompt 
       int number1 = input.nextInt(); // read first number from user 
@@ -37,5 +36,9 @@ public class Comparison {
       if (number1 >= number2) {
          System.out.printf("%d >= %d%n", number1, number2);
 	  }
-   } // end method main
-} // end class Comparison
+
+     input.close(); // close Scanner
+
+
+   }  
+}  
