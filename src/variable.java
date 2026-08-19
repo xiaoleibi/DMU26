@@ -1,5 +1,4 @@
-package javap;
-
+ 
 public class variable {
 	 public static void main(String[] args) {
 		   var myName="xbi";
