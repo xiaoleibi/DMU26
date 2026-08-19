@@ -19,5 +19,6 @@ public class Gasmile {
         mpg = miles / gallons;
 
         System.out.println("Miles Per Gallon: " + mpg);
+        scan.close(); // close Scanner
     }
 }

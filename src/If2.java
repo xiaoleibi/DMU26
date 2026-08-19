@@ -1,4 +1,4 @@
-package javap;
+
 
 public class If2 {
  public static void main(String[] args) {
@@ -7,11 +7,11 @@ public class If2 {
 	if ( indtaegt >= udgift ){
 	  overskud = indtaegt - udgift;
 	  System.out.println(
-	    "Der er et overskud på " + overskud + " kr." );
+	    "Der er et overskud pï¿½ " + overskud + " kr." );
 	} else {
 	  underskud = udgift - indtaegt;
 	  System.out.println(
-	    "Der er et underskud på " + underskud + " kr." );
+	    "Der er et underskud pï¿½ " + underskud + " kr." );
 	}
  }
 }
