@@ -26,5 +26,6 @@ public class MinOfThree {
          min = num3;
 
       System.out.println("Minimum value: " + min);
+      scan.close(); // close Scanner
    }
 }
