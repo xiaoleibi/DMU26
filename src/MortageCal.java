@@ -2,6 +2,9 @@ import java.text.NumberFormat;
 import java.util.Locale;
 import java.util.Scanner;
 
+//  a simple calculator which can be improved, such as adding input validation,
+//   error handling, and more features like amortization schedule or different payment frequencies.
+
 public class MortageCal {
 	public static void main(String[] args) {
 		Scanner scan = new Scanner(System.in);
@@ -21,7 +24,8 @@ public class MortageCal {
 		double monthlyInterestRate = annualInterestRate / 100 / 12;
 		double monthlyPayment;
 
-		if (monthlyInterestRate == 0) {
+		if (monthlyInterestRate == 0.0 //this is a special case where the interest rate is 0, so we can just divide the principal by the number of payments
+				|| numberOfPayments == 0) {
 			monthlyPayment = principal / numberOfPayments;
 		} else {
 			monthlyPayment = principal * monthlyInterestRate
