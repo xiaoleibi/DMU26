@@ -5,7 +5,7 @@ import java.util.Scanner;
 public class MortageCal {
 	public static void main(String[] args) {
 		Scanner scan = new Scanner(System.in);
-		scan.useLocale(Locale.forLanguageTag("da-DK"));
+		scan.useLocale(Locale.forLanguageTag("da-DK")); //the scanner will use the Danish locale for input
 		NumberFormat danishCurrency = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("da-DK"));
 
 		System.out.print("How much do you want to borrow (DKK)? ");
