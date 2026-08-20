@@ -34,7 +34,7 @@ public class SimpleTree extends JPanel {
         JFrame frame = new JFrame("Simple Recursive Tree");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(600, 600);
-        frame.add(new SimpleTree(10));
+        frame.add(new SimpleTree(3));
         frame.setVisible(true);
     }
 }
