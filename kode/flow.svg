@@ -1,0 +1,172 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="1250" viewBox="0 0 1000 1250">
+
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10"
+            refX="9" refY="3" orient="auto">
+      <path d="M0,0 L10,3 L0,6 Z" fill="black"/>
+    </marker>
+
+    <style>
+      .box {
+        fill: white;
+        stroke: black;
+        stroke-width: 2;
+      }
+
+      .text {
+        font-family: Arial, sans-serif;
+        font-size: 18px;
+        text-anchor: middle;
+      }
+
+      .small {
+        font-family: Arial, sans-serif;
+        font-size: 16px;
+        text-anchor: middle;
+      }
+
+      .line {
+        stroke: black;
+        stroke-width: 2;
+        fill: none;
+        marker-end: url(#arrow);
+      }
+
+      .label {
+        font-family: Arial, sans-serif;
+        font-size: 16px;
+        font-weight: bold;
+      }
+    </style>
+  </defs>
+
+
+  <!-- START -->
+  <rect class="box" x="400" y="30" width="200" height="60" rx="30"/>
+  <text class="text" x="500" y="67">START</text>
+
+
+  <!-- START -> Initialisering -->
+  <line class="line" x1="500" y1="90" x2="500" y2="130"/>
+
+
+  <!-- Initialisering -->
+  <rect class="box" x="350" y="130" width="300" height="80"/>
+  <text class="text" x="500" y="160">indtægt = 10000</text>
+  <text class="text" x="500" y="190">udgift = 7000</text>
+
+
+  <!-- Initialisering -> Decision 1 -->
+  <line class="line" x1="500" y1="210" x2="500" y2="260"/>
+
+
+  <!-- Decision 1 -->
+  <polygon class="box"
+           points="500,260 650,330 500,400 350,330"/>
+  <text class="text" x="500" y="325">indtægt &gt;</text>
+  <text class="text" x="500" y="350">udgift?</text>
+
+
+  <!-- YES label -->
+  <text class="label" x="385" y="315">YES</text>
+
+  <!-- NO label -->
+  <text class="label" x="650" y="315">NO</text>
+
+
+  <!-- Decision 1 YES -> Overskud -->
+  <line class="line" x1="350" y1="330" x2="220" y2="330"/>
+  <line class="line" x1="220" y1="330" x2="220" y2="450"/>
+
+
+  <!-- Overskud -->
+  <rect class="box" x="80" y="450" width="280" height="80"/>
+  <text class="text" x="220" y="480">overskud =</text>
+  <text class="text" x="220" y="510">indtægt - udgift</text>
+
+
+  <!-- Overskud -> Print -->
+  <line class="line" x1="220" y1="530" x2="220" y2="580"/>
+
+
+  <!-- Print overskud -->
+  <rect class="box" x="70" y="580" width="300" height="100"/>
+  <text class="small" x="220" y="610">Print:</text>
+  <text class="small" x="220" y="640">"Der er et overskud</text>
+  <text class="small" x="220" y="665">på..."</text>
+
+
+  <!-- Decision 1 NO -> Decision 2 -->
+  <line class="line" x1="650" y1="330" x2="780" y2="330"/>
+  <line class="line" x1="780" y1="330" x2="780" y2="450"/>
+
+
+  <!-- Decision 2 -->
+  <polygon class="box"
+           points="780,450 920,515 780,580 640,515"/>
+  <text class="text" x="780" y="510">indtægt &lt;</text>
+  <text class="text" x="780" y="535">udgift?</text>
+
+
+  <!-- YES label -->
+  <text class="label" x="700" y="500">YES</text>
+
+  <!-- NO label -->
+  <text class="label" x="875" y="500">NO</text>
+
+
+  <!-- Decision 2 YES -> Underskud -->
+  <line class="line" x1="640" y1="515" x2="500" y2="515"/>
+  <line class="line" x1="500" y1="515" x2="500" y2="680"/>
+
+
+  <!-- Underskud -->
+  <rect class="box" x="350" y="680" width="300" height="90"/>
+  <text class="text" x="500" y="710">underskud =</text>
+  <text class="text" x="500" y="740">udgift - indtægt</text>
+
+
+  <!-- Underskud -> Print -->
+  <line class="line" x1="500" y1="770" x2="500" y2="820"/>
+
+
+  <!-- Print underskud -->
+  <rect class="box" x="350" y="820" width="300" height="100"/>
+  <text class="small" x="500" y="850">Print:</text>
+  <text class="small" x="500" y="880">"Der er et underskud</text>
+  <text class="small" x="500" y="905">på..."</text>
+
+
+  <!-- Decision 2 NO -> Equal -->
+  <line class="line" x1="920" y1="515" x2="950" y2="515"/>
+  <line class="line" x1="950" y1="515" x2="950" y2="820"/>
+
+
+  <!-- Equal -->
+  <rect class="box" x="700" y="820" width="250" height="100"/>
+  <text class="small" x="825" y="850">Print:</text>
+  <text class="small" x="825" y="880">"Det kunne være</text>
+  <text class="small" x="825" y="905">det samme!"</text>
+
+
+  <!-- Connect overskud to bottom -->
+  <line class="line" x1="220" y1="680" x2="220" y2="1000"/>
+  <line class="line" x1="220" y1="1000" x2="500" y2="1000"/>
+
+
+  <!-- Connect underskud to bottom -->
+  <line class="line" x1="500" y1="920" x2="500" y2="1000"/>
+
+
+  <!-- Connect equal to bottom -->
+  <line class="line" x1="825" y1="920" x2="825" y2="1000"/>
+  <line class="line" x1="825" y1="1000" x2="500" y2="1000"/>
+
+
+  <!-- END -->
+  <line class="line" x1="500" y1="1000" x2="500" y2="1060"/>
+
+  <rect class="box" x="400" y="1060" width="200" height="60" rx="30"/>
+  <text class="text" x="500" y="1097">END</text>
+
+</svg>
