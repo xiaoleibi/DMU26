@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Datamodellering og E-R-modellen &ndash; Database og MySQL (DMU)</title>
+<style>
+:root{
+  --ink:#35443B; --teal:#169C9A; --orange:#FA9A42; --cyan:#D2EFFA;
+  --cream:#F7F3E9; --creamline:#E7DFCE; --paper:#FFFFFF;
+  --muted:#6E7B75; --faint:#9AA5A0; --line:#E4E9E7;
+}
+*{box-sizing:border-box; margin:0; padding:0}
+html,body{height:100%}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Helvetica Neue",Arial,"Noto Sans",sans-serif;
+  background:#EDF1EF;
+  color:var(--ink);
+  overflow:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+#stagewrap{position:fixed; inset:0; display:flex; align-items:center; justify-content:center}
+#stage{
+  width:1280px; height:720px; background:var(--paper);
+  border-radius:18px; box-shadow:0 24px 70px rgba(53,68,59,.22), 0 2px 8px rgba(53,68,59,.10);
+  position:relative; overflow:hidden; transform-origin:center center;
+}
+.slide{position:absolute; inset:0; padding:52px 60px 46px; display:none; background:var(--paper)}
+.slide.active{display:flex; flex-direction:column}
+.slide.center{align-items:flex-start; justify-content:center}
+.slide.bleed{padding:0}
+.slide.bleed .fill{width:100%; height:100%; object-fit:contain; display:block; background:#E7EDEB}
+.slide.bleed.soft .fill{object-fit:contain; background:#fff}
+
+.kicker{font-size:13px; font-weight:700; letter-spacing:.22em; text-transform:uppercase; color:var(--teal); margin-bottom:10px}
+.head h2{font-size:42px; font-weight:800; letter-spacing:-.01em; line-height:1.08}
+.head h2 .en{font-weight:600; font-size:26px; color:var(--muted)}
+.head{margin-bottom:26px}
+
+.numlist{list-style:none; display:flex; flex-direction:column; gap:14px}
+.numlist li{display:flex; gap:16px; align-items:flex-start}
+.numlist .n{
+  flex:0 0 auto; width:34px; height:34px; border:1.5px solid var(--teal); border-radius:50%;
+  color:var(--teal); font-weight:700; font-size:15px; display:flex; align-items:center; justify-content:center; margin-top:2px;
+}
+.numlist h3{font-size:19px; font-weight:700; margin-bottom:3px}
+.numlist p{font-size:15px; line-height:1.45; color:var(--muted); max-width:640px}
+.numlist.big li{align-items:center}
+.numlist.big h3{font-size:22px}
+.numlist.big p{font-size:16px}
+
+.twocol{display:grid; grid-template-columns:1fr 1.35fr; gap:36px; align-items:start; flex:1}
+.twocol.cards{grid-template-columns:1.25fr 1fr}
+.hlcard{
+  border:2px solid var(--orange); border-radius:14px; padding:26px 28px; background:#fff;
+}
+.hlcard h3{font-size:21px; font-weight:800; margin-bottom:10px; color:var(--ink)}
+.hlcard p{font-size:15.5px; line-height:1.5; color:var(--muted)}
+
+.card{border-radius:14px; padding:26px 28px; height:100%}
+.card.cream{background:var(--cream); border:1.5px solid var(--creamline)}
+.card.orange{background:#FEF6EC; border:1.5px solid var(--orange)}
+.card h3{font-size:19px; font-weight:800; margin-bottom:12px}
+.card p{font-size:15px; line-height:1.5; color:var(--muted); margin-bottom:12px}
+.card ol,.card ul{padding-left:20px; display:flex; flex-direction:column; gap:9px}
+.card li{font-size:15px; line-height:1.45}
+.card .q{color:var(--muted); font-size:13.5px}
+
+.prose{max-width:940px}
+.prose p{font-size:21px; line-height:1.55; color:var(--ink)}
+.prose blockquote{
+  margin-top:26px; padding:18px 24px; border-left:4px solid var(--teal);
+  background:#F2FAFB; border-radius:0 12px 12px 0; font-size:18px; line-height:1.55; color:var(--ink);
+}
+
+.fig{display:block; margin:0 auto}
+.fig.w1{width:78%}
+.fig.w2{width:100%; margin-top:14px}
+.fig.big{max-width:100%; max-height:520px; object-fit:contain}
+.fig.tall{max-height:520px}
+.fig.wide{width:100%; max-height:530px; object-fit:contain}
+.fig.side{height:78%; max-width:52%; margin-left:auto; margin-right:0; object-fit:contain}
+.twocol .fig{max-width:100%}
+
+.section{justify-content:center}
+.section .secnum{font-size:170px; font-weight:800; color:var(--teal); opacity:.16; line-height:1; margin-bottom:-30px}
+.section h2{font-size:54px; font-weight:800; letter-spacing:-.01em; margin-bottom:14px}
+.section .secsub{font-size:20px; color:var(--muted); max-width:760px; line-height:1.5}
+
+.cover{justify-content:center}
+.cover .kicker{font-size:15px}
+.cover h1{font-size:64px; font-weight:800; line-height:1.06; letter-spacing:-.015em; margin-bottom:26px}
+.cover-tags{font-size:18px; color:var(--teal); font-weight:600; margin-bottom:40px}
+.cover-foot{font-size:14px; color:var(--faint); position:absolute; left:60px; bottom:44px}
+.cover-bars{position:absolute; top:0; right:0; bottom:0; width:248px}
+.cover-bars .b1{position:absolute; inset:0; background:var(--ink); opacity:.06}
+.cover-bars .b2{position:absolute; left:0; right:0; bottom:0; height:40%; background:var(--teal); opacity:.10}
+
+.srcnote{
+  position:absolute; top:44px; right:48px; min-width:30px; height:30px; padding:0 8px;
+  border:1.5px solid var(--teal); border-radius:999px; color:var(--teal);
+  font-size:13px; font-weight:700; display:flex; align-items:center; justify-content:center;
+}
+.isbn{position:absolute; left:60px; bottom:40px; font-size:12px; color:var(--faint)}
+
+.band{
+  position:absolute; left:50%; bottom:64px; transform:translateX(-50%);
+  background:rgba(255,255,255,.92); color:var(--ink); font-weight:800; font-size:22px;
+  padding:12px 34px; border-radius:999px; letter-spacing:.04em;
+  box-shadow:0 6px 24px rgba(0,0,0,.18);
+}
+
+.exgrid{display:grid; grid-template-columns:1fr 1fr; gap:32px; flex:1; align-content:center}
+.excard{border:2px solid var(--cyan); border-radius:16px; padding:34px 38px; background:#F7FCFE; position:relative}
+.excard .exno{
+  font-size:15px; font-weight:800; color:#fff; background:var(--teal);
+  display:inline-block; padding:5px 16px; border-radius:999px; margin-bottom:16px; letter-spacing:.06em;
+}
+.excard h3{font-size:26px; font-weight:800; margin-bottom:12px}
+.excard p{font-size:19px; line-height:1.5; color:var(--muted)}
+.exnum{display:flex; gap:56px; margin:6px 0 22px}
+.exnum span{font-size:110px; font-weight:800; color:var(--teal); line-height:1}
+.exsub{font-size:18px; color:var(--muted)}
+.lnk{margin-top:26px}
+.lnk a{color:var(--teal); font-size:17px; text-decoration:none; border-bottom:1.5px solid var(--cyan)}
+.lnk a:hover{border-bottom-color:var(--teal)}
+
+.steps{margin-top:8px}
+.steps > p{font-size:20px; margin-bottom:16px}
+.steps ol{padding-left:24px; display:flex; flex-direction:column; gap:12px}
+.steps li{font-size:19px; line-height:1.4}
+
+.sqlrow{grid-template-columns:1.15fr 1fr; align-items:center}
+.code{
+  background:#2E3A35; color:#EAF3F0; border-radius:14px; padding:24px 26px;
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; font-size:14.5px; line-height:1.55;
+  overflow:hidden; box-shadow:inset 0 0 0 1px rgba(255,255,255,.06);
+}
+.dbtab{width:100%; border-collapse:collapse; margin-top:6px; font-size:16px}
+.dbtab th{background:var(--teal); color:#fff; text-align:left; padding:12px 18px; font-size:15px}
+.dbtab td{padding:11px 18px; border-bottom:1px solid var(--cyan); color:var(--ink)}
+.dbtab tbody tr:nth-child(even){background:#F2FAFB}
+
+/* ---------- chrome ---------- */
+#ui{position:fixed; left:0; right:0; bottom:14px; display:flex; justify-content:center; z-index:20}
+#bar{
+  display:flex; align-items:center; gap:10px; background:rgba(255,255,255,.92);
+  border:1px solid var(--line); border-radius:999px; padding:7px 12px;
+  box-shadow:0 8px 28px rgba(53,68,59,.14); backdrop-filter:blur(6px);
+}
+#bar button{
+  border:1px solid var(--line); background:#fff; color:var(--ink); border-radius:999px;
+  height:32px; min-width:32px; padding:0 12px; font-size:13.5px; font-weight:600; cursor:pointer;
+}
+#bar button:hover{border-color:var(--teal); color:var(--teal)}
+#counter{font-size:13px; font-weight:700; color:var(--muted); min-width:64px; text-align:center; font-variant-numeric:tabular-nums}
+#progress{position:fixed; top:0; left:0; height:3px; background:var(--teal); width:0%; z-index:30; transition:width .25s ease}
+#ov{position:fixed; inset:0; background:rgba(237,241,239,.97); z-index:40; display:none; overflow:auto; padding:48px 6vw}
+#ov.open{display:block}
+#ov h4{font-size:15px; letter-spacing:.2em; text-transform:uppercase; color:var(--teal); margin-bottom:22px}
+#ovgrid{display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:12px}
+.ovitem{
+  text-align:left; background:#fff; border:1px solid var(--line); border-radius:12px; padding:14px 16px;
+  cursor:pointer; font-size:14.5px; color:var(--ink); display:flex; gap:12px; align-items:baseline;
+}
+.ovitem:hover{border-color:var(--teal)}
+.ovitem b{color:var(--teal); font-variant-numeric:tabular-nums}
+.ovitem.cur{border-color:var(--teal); background:#F2FAFB}
+.hint{position:fixed; right:18px; top:16px; font-size:12px; color:var(--faint); z-index:20}
+@media print{#ui,#progress,#ov,.hint{display:none}}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+<div id="stagewrap"><div id="stage">
+
+<section class="slide cover" data-title="Datamodellering og E-R-modellen">
+  <div class="cover-bars" aria-hidden="true"><i class="b1"></i><i class="b2"></i></div>
+  <p class="kicker">Database og MySQL</p>
+  <h1>Datamodellering<br>og E-R-modellen</h1>
+  <p class="cover-tags">Entiteter &middot; attributter &middot; relationer &middot; kardinalitet &middot; associativer &middot; notation</p>
+  <p class="cover-foot">Kapitel 2 &middot; Grundl&aelig;ggende programmering og database &middot; DMU</p>
+</section>
+
+<section class="slide" data-title="Dagens indhold">
+  <header class="head"><p class="kicker">Overblik</p><h2>Dagens indhold</h2></header>
+  <ol class="numlist big">
+    <li><span class="n">1</span><div><h3>Grundlaget for datamodellering</h3><p>Hvorfor modellen er det vigtigste skridt &mdash; og hvad forretningsregler styrer</p></div></li>
+    <li><span class="n">2</span><div><h3>Entiteter og attributter</h3><p>Typer, instanser, st&aelig;rke og svage entiteter samt attributklassifikation</p></div></li>
+    <li><span class="n">3</span><div><h3>Relationer og kardinalitet</h3><p>Relationsgrader, associative entiteter, min./maks.-kardinalitet og notation</p></div></li>
+  </ol>
+  <span class="srcnote">s. 2</span>
+</section>
+
+<section class="slide section" data-title="01 Grundlaget for datamodellering">
+  <p class="secnum">01</p>
+  <div>
+    <h2>Grundlaget for datamodellering</h2>
+    <p class="secsub">En E-R-model er broen mellem forretningens sprog og databasens tabeller. Den skal bygges rigtigt fra starten.</p>
+  </div>
+  <span class="srcnote">s. 3</span>
+</section>
+
+<section class="slide" data-title="Hvorfor datamodellering?">
+  <header class="head"><p class="kicker">Grundlaget</p><h2>Hvorfor datamodellering?</h2></header>
+  <div class="twocol">
+    <div class="hlcard">
+      <h3>Fejl fanget tidligt er billige at rette</h3>
+      <p>En fejl i datamodellen koster typisk 10&ndash;100 gange mere at rette, n&aring;r databasen er i drift.</p>
+    </div>
+    <ol class="numlist">
+      <li><span class="n">1</span><div><h3>H&oslash;j afkastning p&aring; investeringen</h3><p>Mange udviklere og forretningsledere anser datamodellering for den vigtigste del af udviklingsprocessen</p></div></li>
+      <li><span class="n">2</span><div><h3>F&aelig;lles sprog</h3><p>Modellen g&oslash;r det muligt for forretning og teknikere at tale om de samme begreber</p></div></li>
+      <li><span class="n">3</span><div><h3>Grundlag for designet</h3><p>E-R-modellen overs&aelig;ttes senere direkte til tabeller, n&oslash;gler og relationer</p></div></li>
+      <li><span class="n">4</span><div><h3>Dokumentation</h3><p>Modellen er levende dokumentation af, hvad organisationen &oslash;nsker at gemme</p></div></li>
+    </ol>
+  </div>
+  <span class="srcnote">s. 4</span>
+</section>
+
+<section class="slide" data-title="E/R diagram">
+  <header class="head"><p class="kicker">Grundlaget</p><h2>E/R-diagram</h2></header>
+  <img class="fig w1" src="img/slide06-er-diagram.png" alt="Et E/R-diagram er en tegning, der viser tabellerne og forbindelserne mellem dem i relationsdatabasen">
+  <img class="fig w2" src="img/slide06-leverandoer-postnr.png" alt="Leverandør bor i Postnr By">
+  <p class="isbn">ISBN: 9788761696670 &ndash; Erhvervsinformatik &middot; Copyright forfatterne og Systime A/S 2020</p>
+</section>
+
+<section class="slide" data-title="Relationsdatabase med 3 tabeller">
+  <header class="head"><p class="kicker">Grundlaget</p><h2>Relationsdatabase med 3 tabeller</h2></header>
+  <img class="fig big" src="img/slide07-tre-tabeller.png" alt="Kunder, Ordrer, Ordreindhold og Varer i en relationsdatabase">
+  <p class="isbn">ISBN: 9788761696670 &ndash; Erhvervsinformatik &middot; Copyright forfatterne og Systime A/S 2020</p>
+</section>
+
+<section class="slide bleed" data-title="Mange-til-mange mellem tabeller">
+  <img class="fill" src="img/slide08-kunder-ordrer-mm.png" alt="Kunder og Ordrer med dobbeltrettet mange-til-mange relation">
+</section>
+
+<section class="slide bleed" data-title="Mange-til-mange mellem tabeller">
+  <img class="fill" src="img/slide09-varer-ordrer-mm.png" alt="Varer og Ordrer med dobbeltrettet mange-til-mange relation">
+</section>
+
+<section class="slide" data-title="M-m relationer løses med en mellemtabel">
+  <div class="prose"><p>Vi l&oslash;ser dette ved at opbygge en ny tabel med relevante data. Denne tabel skal oprettes mellem de to tabeller, der har m-m relationen, hvorefter vi i stedet f&aring;r to nye 1-m relationer.</p></div>
+  <img class="fig big" src="img/slide10-mellemtabel.png" alt="Kunder, Ordrer, Ordreindhold og Varer med mellemtabellen">
+</section>
+
+<section class="slide" data-title="Prim&aelig;rn&oslash;gle">
+  <header class="head"><p class="kicker">N&oslash;gler</p><h2>Prim&aelig;rn&oslash;gle</h2></header>
+  <div class="prose">
+    <p>Prim&aelig;rn&oslash;glen er det felt, der entydigt identificerer hver post i en tabel. Uden prim&aelig;rn&oslash;glen vil der ved s&oslash;gning i databasen v&aelig;re tvivl om, hvilken post vi pr&aelig;cis &oslash;nsker at identificere.</p>
+    <blockquote><strong>Prim&aelig;rn&oslash;gle</strong> &ndash; det felt, der entydigt identificerer den enkelte post i databasen. Vi siger ogs&aring;, at prim&aelig;rn&oslash;glen g&oslash;r hver post i tabellen unik.</blockquote>
+  </div>
+</section>
+
+<section class="slide bleed soft" data-title="Eksempel: kunder med prim&aelig;rn&oslash;gle">
+  <img class="fill" src="img/slide12-kunder-tabel.png" alt="Kunde-tabel med kundenr som prim&aelig;rn&oslash;gle">
+</section>
+
+<section class="slide" data-title="Fremmedn&oslash;gle">
+  <header class="head"><p class="kicker">N&oslash;gler</p><h2>Fremmedn&oslash;gle <span class="en">(foreign key / FK)</span></h2></header>
+  <div class="prose">
+    <p>Det felt i &raquo;mange&laquo;-tabellen i en database, der er identisk med prim&aelig;rn&oslash;glefeltet i &raquo;en&laquo;-tabellen.</p>
+    <blockquote>En prim&aelig;rn&oslash;gle og en fremmedn&oslash;gle, der er koblet sammen, skal altid have <strong>samme datatype</strong>.</blockquote>
+  </div>
+</section>
+
+<section class="slide bleed soft" data-title="Eksempel: kunder og postnumre">
+  <img class="fill" src="img/slide14-kunder-postnr-tabel.png" alt="Kunde-tabel og postnummer-tabel">
+</section>
+
+<section class="slide section" data-title="02 Relationer og kardinalitet">
+  <p class="secnum">02</p>
+  <div>
+    <h2>Relationer og kardinalitet</h2>
+    <p class="secsub">Relationerne binder entiteterne sammen &mdash; og kardinaliteten bestemmer, hvor mange der m&aring; v&aelig;re forbundet.</p>
+  </div>
+  <span class="srcnote">s. 18</span>
+</section>
+
+<section class="slide bleed dark" data-title="ERD &ndash; Crow&rsquo;s foot model">
+  <img class="fill" src="img/slide16-crows-foot-intro.jpg" alt="Fuglefods spor i sne">
+  <div class="band">ERD &ndash; Crow&rsquo;s foot model</div>
+</section>
+
+<section class="slide" data-title="ERD: Crows foot model">
+  <header class="head"><p class="kicker">Notation</p><h2>ERD: Crows foot model</h2></header>
+  <img class="fig big" src="img/slide17-erd-crows-foot-legend.png" alt="Oversigt over entitetstyper og kardinalitetsnotation">
+</section>
+
+<section class="slide" data-title="Crows foot notation">
+  <header class="head"><p class="kicker">Notation</p><h2>Crows foot notation</h2></header>
+  <img class="fig tall" src="img/slide18-relationseksempler.jpg" alt="1:M, M:M og 1:1 relationer med teaches som eksempel">
+</section>
+
+<section class="slide" data-title="Crows foot notation &ndash; entity with attributes">
+  <header class="head"><p class="kicker">Notation</p><h2>Crows foot notation <span class="en">Entity with attributes</span></h2></header>
+  <img class="fig wide" src="img/slide19-entity-with-attributes.jpg" alt="Entitet med attributfelter og kardinalitets- og modalitetslegend">
+</section>
+
+<section class="slide" data-title="Crows foot notation &ndash; Tiny College">
+  <header class="head"><p class="kicker">Notation</p><h2>Crows foot notation <span class="en">Entity with attributes</span></h2></header>
+  <img class="fig big" src="img/slide20-tiny-college.jpg" alt="The Ninth Tiny College ERD segment: Building, Room og Class">
+</section>
+
+<section class="slide" data-title="&Oslash;velse 7.6 &amp; 7.7 &ndash; E/R-diagrammer">
+  <header class="head"><p class="kicker">&Oslash;velse</p><h2>E/R-diagrammer</h2></header>
+  <div class="exgrid">
+    <div class="excard">
+      <p class="exno">7.6</p>
+      <h3>E/R-diagram for idr&aelig;tsforening</h3>
+      <p>Opret et E/R-diagram for tabellerne tilknyttet idr&aelig;tsforeningen</p>
+    </div>
+    <div class="excard">
+      <p class="exno">7.7</p>
+      <h3>E/R-diagram for skoledatabase</h3>
+      <p>Opret et E/R-diagram for skoledatabasen</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-title="Eksempel: Furniture Company">
+  <header class="head"><p class="kicker">Eksempel</p><h2>En fuld E-R-model <span class="en">Til Furniture Company</span></h2></header>
+  <img class="fig side" src="img/slide22-furniture-company.png" alt="Furniture Company E-R-diagram med SALESPERSON, TERRITORY, PRODUCT, CUSTOMER, ORDER, VENDOR, EMPLOYEE m.fl.">
+  <span class="srcnote">s. 25</span>
+</section>
+
+<section class="slide center" data-title="Identifying vs non-identifying relationship">
+  <header class="head"><p class="kicker">Notation</p><h2>Identifying relationship <span class="en">(solid line)</span> vs non-identifying relationship <span class="en">(dashed line)</span></h2></header>
+  <p class="lnk"><a href="https://barzeer.github.io/database/identifying.html" target="_blank" rel="noopener">https://barzeer.github.io/database/identifying.html</a></p>
+</section>
+
+<section class="slide" data-title="Gruppe&oslash;velse &ndash; tegn en E-R-model">
+  <header class="head"><p class="kicker">Opgave</p><h2>Gruppe&oslash;velse &mdash; tegn en E-R-model</h2></header>
+  <div class="twocol cards">
+    <div class="card cream">
+      <h3>Case: skolens kursusadministration</h3>
+      <p>En skole vil gemme data om kurser, studerende og l&aelig;rere.</p>
+      <ol>
+        <li>Identific&eacute;r entitet og relation</li>
+        <li>Angiv attributter for hver entitet, og klassific&eacute;r dem <span class="q">(Hvilke n&oslash;glefelter skal der v&aelig;re i de enkelte tabeller?)</span></li>
+        <li>Tegn relationerne, og s&aelig;t kardinalitet p&aring;</li>
+      </ol>
+    </div>
+    <div class="card orange">
+      <h3>Levering</h3>
+      <ul>
+        <li>Et E-R-diagram (h&aring;ndtegnet eller i et v&aelig;rkt&oslash;j)</li>
+        <li>En liste med entiteter og attributter</li>
+        <li>Kort begrundelse for hvert valg</li>
+      </ul>
+    </div>
+  </div>
+  <span class="srcnote">s. 28</span>
+</section>
+
+<section class="slide" data-title="Hands-on: gener&eacute;r ER-diagrammet">
+  <header class="head"><p class="kicker">Hands-on</p><h2>Gener&eacute;r ER-diagrammet</h2></header>
+  <div class="steps">
+    <p>F&oslash;lg disse trin i MySQL Workbench:</p>
+    <ol>
+      <li>Klik p&aring; <strong>Database</strong> i menulinjen.</li>
+      <li>V&aelig;lg <strong>Reverse Engineer</strong>.</li>
+    </ol>
+  </div>
+  <p class="lnk"><a href="https://dev.mysql.com/doc/index-other.html" target="_blank" rel="noopener">https://dev.mysql.com/doc/index-other.html</a></p>
+</section>
+
+<section class="slide" data-title="Hvordan skrives relationen i SQL?">
+  <header class="head"><p class="kicker">SQL</p><h2>Hvordan skrives relationen i SQL?</h2></header>
+  <div class="twocol sqlrow">
+    <pre class="code"><code>CREATE TABLE Laerer (
+  laerer_id INT PRIMARY KEY,
+  navn VARCHAR(100),
+  email VARCHAR(150)
+);
+
+CREATE TABLE Klasse (
+  klasse_id INT PRIMARY KEY,
+  klasse_navn VARCHAR(50),
+  laerer_id INT,
+  FOREIGN KEY (laerer_id)
+    REFERENCES Laerer(laerer_id)
+);</code></pre>
+    <img class="fig big" src="img/slide26-laerer-klasse-sql.png" alt="Laerer- og Klasse-tabeller med PK og FK markeret">
+  </div>
+</section>
+
+<section class="slide" data-title="Gruppeprojekt &ndash; forklar E-R-model">
+  <header class="head"><p class="kicker">Gruppeprojekt</p><h2>Forklar en E-R-model</h2></header>
+  <table class="dbtab">
+    <thead><tr><th>Database</th><th>Difficulty</th><th>Best use</th></tr></thead>
+    <tbody>
+      <tr><td>World</td><td>Beginner</td><td>Basic SELECT</td></tr>
+      <tr><td>albumn</td><td>Beginner</td><td>Albumn track</td></tr>
+      <tr><td>Sakila*</td><td>Intermediate</td><td>ER diagrams, foreign keys, views and stored procedures</td></tr>
+      <tr><td>Scratch</td><td>Beginner&ndash;intermediate</td><td>Business data and order</td></tr>
+      <tr><td>Northwind*</td><td>Beginner&ndash;intermediate</td><td>Orders, products and customers</td></tr>
+      <tr><td>Employees*</td><td>Intermediate&ndash;</td><td>Comp</td></tr>
+    </tbody>
+  </table>
+  <p class="isbn">* kr&aelig;ver download fra MySQL &middot; Gruppeprojekt: v&aelig;lg en database, og forklar dens E-R-model for klassen.</p>
+</section></div></div>
+<div id="ui"><div id="bar">
+  <button id="prev" title="Forrige (←)">&#8592;</button>
+  <span id="counter">01 / 26</span>
+  <button id="next" title="Næste (→)">&#8594;</button>
+  <button id="ovbtn" title="Oversigt (O)">Oversigt</button>
+  <button id="fsbtn" title="Fuld skærm (F)">Fuld skærm</button>
+</div></div>
+<div id="ov"><h4>Oversigt &ndash; 26 slides</h4><div id="ovgrid"></div>
+<button id="ovclose" class="ovitem" style="margin-top:14px">Luk oversigten</button></div>
+<p class="hint">&larr; &rarr; naviger &middot; O oversigt &middot; F fuld skærm</p>
+<script>
+(function(){
+  var stage = document.getElementById('stage');
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var counter = document.getElementById('counter');
+  var progress = document.getElementById('progress');
+  var ov = document.getElementById('ov');
+  var ovgrid = document.getElementById('ovgrid');
+  var N = slides.length;
+  var cur = 0;
+
+  function fit(){
+    var s = Math.min(window.innerWidth/1330, window.innerHeight/800);
+    stage.style.transform = 'scale(' + s + ')';
+  }
+  window.addEventListener('resize', fit); fit();
+
+  function pad(n){ return (n<10?'0':'') + n; }
+
+  function show(i){
+    cur = Math.max(0, Math.min(N-1, i));
+    slides.forEach(function(el,k){ el.classList.toggle('active', k===cur); });
+    counter.textContent = pad(cur+1) + ' / ' + pad(N);
+    progress.style.width = ((cur+1)/N*100) + '%';
+    try{ history.replaceState(null, '', '#/' + (cur+1)); }catch(e){}
+    Array.prototype.forEach.call(ovgrid.children, function(el,k){ el.classList.toggle('cur', k===cur); });
+  }
+
+  function next(){ show(cur+1); }
+  function prev(){ show(cur-1); }
+
+  document.getElementById('next').addEventListener('click', next);
+  document.getElementById('prev').addEventListener('click', prev);
+  document.getElementById('ovbtn').addEventListener('click', function(){ ov.classList.toggle('open'); });
+  document.getElementById('ovclose').addEventListener('click', function(){ ov.classList.remove('open'); });
+  document.getElementById('fsbtn').addEventListener('click', function(){
+    if(document.fullscreenElement){ document.exitFullscreen(); }
+    else{ document.documentElement.requestFullscreen(); }
+  });
+
+  slides.forEach(function(el, k){
+    var b = document.createElement('button');
+    b.className = 'ovitem';
+    b.innerHTML = '<b>' + pad(k+1) + '</b><span>' + (el.getAttribute('data-title') || '') + '</span>';
+    b.addEventListener('click', function(){ show(k); ov.classList.remove('open'); });
+    ovgrid.appendChild(b);
+  });
+
+  document.addEventListener('keydown', function(e){
+    if(e.key==='ArrowRight' || e.key==='PageDown' || e.key===' '){ e.preventDefault(); next(); }
+    else if(e.key==='ArrowLeft' || e.key==='PageUp'){ e.preventDefault(); prev(); }
+    else if(e.key==='Home'){ show(0); }
+    else if(e.key==='End'){ show(N-1); }
+    else if(e.key==='o' || e.key==='O'){ ov.classList.toggle('open'); }
+    else if(e.key==='f' || e.key==='F'){ document.getElementById('fsbtn').click(); }
+    else if(e.key==='Escape'){ ov.classList.remove('open'); }
+  });
+
+  var tx = null;
+  stage.addEventListener('touchstart', function(e){ tx = e.touches[0].clientX; }, {passive:true});
+  stage.addEventListener('touchend', function(e){
+    if(tx===null) return;
+    var dx = e.changedTouches[0].clientX - tx;
+    if(dx < -50) next(); else if(dx > 50) prev();
+    tx = null;
+  }, {passive:true});
+
+  var h = (location.hash.match(/^#\/(\d+)$/) || [])[1];
+  show(h ? parseInt(h,10)-1 : 0);
+})();
+</script>
+</body>
+</html>

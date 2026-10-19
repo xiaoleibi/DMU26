@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Det relationelle database &ndash; DataTyper &middot; Database og MySQL (DMU)</title>
+<style>
+
+:root{
+  --crim:#C80046; --crim2:#7C0434; --cyan:#1CADE4; --ink:#424242;
+  --muted:#797979; --faint:#ABABAB; --line:#E4E6E7; --cyanbg:#EAF8FD; --green:#75BC7F;
+}
+*{box-sizing:border-box; margin:0; padding:0}
+html,body{height:100%}
+body{
+  font-family:Calibri,Carlito,"Segoe UI",-apple-system,"Helvetica Neue",Arial,sans-serif;
+  background:#F1F3F4; color:var(--ink); overflow:hidden; -webkit-font-smoothing:antialiased;
+}
+#stagewrap{position:fixed; inset:0; display:flex; align-items:center; justify-content:center}
+#stage{
+  width:1280px; height:720px; background:#fff; border-radius:18px;
+  box-shadow:0 24px 70px rgba(66,66,66,.22), 0 2px 8px rgba(66,66,66,.10);
+  position:relative; overflow:hidden; transform-origin:center center;
+}
+.slide{position:absolute; inset:0; padding:52px 64px 46px; display:none; background:#fff}
+.slide.active{display:flex; flex-direction:column}
+.slide.center{align-items:flex-start; justify-content:center}
+
+.kicker{font-size:13px; font-weight:700; letter-spacing:.22em; text-transform:uppercase; color:var(--crim); margin-bottom:10px}
+.head h2{font-size:42px; font-weight:700; letter-spacing:-.01em; line-height:1.1}
+.head h2 .en{font-weight:400; font-size:26px; color:var(--muted)}
+.head{margin-bottom:26px}
+.rule{height:5px; width:120px; background:var(--crim); border-radius:3px; margin:14px 0 0}
+
+/* title-only slides */
+.slide.titleonly{align-items:center; justify-content:center; text-align:center}
+.slide.titleonly .bigt{font-size:52px; font-weight:700; line-height:1.15; max-width:1000px}
+.slide.titleonly .sub{font-size:26px; color:var(--muted); margin-top:16px}
+.slide.titleonly .rule{width:160px; margin:26px auto 0}
+
+/* cover */
+.cover{justify-content:center}
+.cover .kicker{font-size:15px}
+.cover h1{font-size:58px; font-weight:700; line-height:1.08; margin-bottom:30px}
+.cover .who{font-size:20px; color:var(--muted)}
+.cover-bars{position:absolute; top:0; right:0; bottom:0; width:230px}
+.cover-bars .b1{position:absolute; inset:0; background:var(--crim2); opacity:.07}
+.cover-bars .b2{position:absolute; left:0; right:0; bottom:0; height:42%; background:var(--crim); opacity:.12}
+
+/* numbered list */
+.numlist{list-style:none; display:flex; flex-direction:column; gap:14px}
+.numlist li{display:flex; gap:16px; align-items:flex-start}
+.numlist .n{flex:0 0 auto; width:34px; height:34px; border:1.5px solid var(--crim); border-radius:50%;
+  color:var(--crim); font-weight:700; font-size:15px; display:flex; align-items:center; justify-content:center; margin-top:2px}
+.numlist h3{font-size:19px; font-weight:700; margin-bottom:3px}
+.numlist p{font-size:15px; line-height:1.45; color:var(--muted); max-width:640px}
+
+.prose{max-width:960px}
+.prose p{font-size:21px; line-height:1.55}
+.prose blockquote{margin-top:24px; padding:18px 24px; border-left:4px solid var(--crim);
+  background:#FCF2F6; border-radius:0 12px 12px 0; font-size:18px; line-height:1.55}
+
+.twocol{display:grid; grid-template-columns:1fr 1fr; gap:36px; align-items:start; flex:1}
+.twocol.cards{grid-template-columns:1fr 1fr}
+
+.card{border-radius:14px; padding:26px 28px; background:#fff; border:1.5px solid var(--line)}
+.card.cyan{border:2px solid var(--cyan); background:var(--cyanbg)}
+.card.crim{border:2px solid var(--crim); background:#FCF2F6}
+.card h3{font-size:19px; font-weight:700; margin-bottom:10px}
+.card p{font-size:15.5px; line-height:1.5; color:var(--muted)}
+.card p strong{color:var(--ink)}
+
+.code{
+  background:#322F35; color:#EAF0F4; border-radius:14px; padding:24px 28px;
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; font-size:15px; line-height:1.6;
+  white-space:pre; overflow:hidden; box-shadow:inset 0 0 0 1px rgba(255,255,255,.06);
+}
+.codeblock{margin-top:20px}
+.lnk{margin-top:22px}
+.lnk a{color:var(--crim); font-size:17px; text-decoration:none; border-bottom:1.5px solid #F3C9D9}
+.lnk a:hover{border-bottom-color:var(--crim)}
+.srcnote{position:absolute; top:44px; right:48px; min-width:30px; height:30px; padding:0 8px;
+  border:1.5px solid var(--crim); border-radius:999px; color:var(--crim); font-size:13px; font-weight:700;
+  display:flex; align-items:center; justify-content:center}
+.isbn{position:absolute; left:64px; bottom:40px; font-size:12px; color:var(--faint)}
+
+/* figures */
+.fig{display:block; margin:0 auto; max-width:100%}
+.fig.mid{max-height:470px; object-fit:contain}
+.fig.tall{max-height:540px; object-fit:contain}
+.fig.logo{max-height:150px}
+.figw{flex:1; display:flex; align-items:center; justify-content:center; min-height:0}
+
+.slide.bleed{padding:0}
+.fill{width:100%; height:100%; object-fit:contain; display:block}
+.bd-light{background:#EDF0F1}
+.bd-dark{background:#3A3F45}
+.slide.bleed .band{
+  position:absolute; left:50%; bottom:56px; transform:translateX(-50%);
+  background:rgba(255,255,255,.93); color:var(--ink); font-weight:700; font-size:22px;
+  padding:12px 34px; border-radius:999px; letter-spacing:.04em; box-shadow:0 6px 24px rgba(0,0,0,.25);
+}
+
+/* quiz */
+.quiz{display:flex; flex-direction:column; gap:14px; margin-top:4px}
+.q{background:#FBFBFc; border:1px solid var(--line); border-left:4px solid var(--crim); border-radius:0 12px 12px 0; padding:14px 20px}
+.q .qt{font-size:17px; font-weight:700; margin-bottom:6px}
+.q .qo{font-size:14.5px; color:var(--muted); line-height:1.5}
+.q .qo span{display:inline-block; margin-right:22px}
+
+/* exercise */
+.exgrid{display:grid; grid-template-columns:1fr; gap:22px; flex:1; align-content:center}
+.excard{border:2px solid var(--cyan); border-radius:16px; padding:28px 34px; background:var(--cyanbg)}
+.excard h3{font-size:24px; font-weight:700; margin-bottom:10px}
+.excard p{font-size:18px; line-height:1.5; color:var(--ink)}
+
+/* chrome */
+#ui{position:fixed; left:0; right:0; bottom:14px; display:flex; justify-content:center; z-index:20}
+#bar{display:flex; align-items:center; gap:10px; background:rgba(255,255,255,.92); border:1px solid var(--line);
+  border-radius:999px; padding:7px 12px; box-shadow:0 8px 28px rgba(66,66,66,.14); backdrop-filter:blur(6px)}
+#bar button{border:1px solid var(--line); background:#fff; color:var(--ink); border-radius:999px;
+  height:32px; min-width:32px; padding:0 12px; font-size:13.5px; font-weight:600; cursor:pointer}
+#bar button:hover{border-color:var(--crim); color:var(--crim)}
+#counter{font-size:13px; font-weight:700; color:var(--muted); min-width:64px; text-align:center; font-variant-numeric:tabular-nums}
+#progress{position:fixed; top:0; left:0; height:3px; background:var(--crim); width:0%; z-index:30; transition:width .25s ease}
+#ov{position:fixed; inset:0; background:rgba(241,243,244,.97); z-index:40; display:none; overflow:auto; padding:48px 6vw}
+#ov.open{display:block}
+#ov h4{font-size:15px; letter-spacing:.2em; text-transform:uppercase; color:var(--crim); margin-bottom:22px}
+#ovgrid{display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:12px}
+.ovitem{text-align:left; background:#fff; border:1px solid var(--line); border-radius:12px; padding:14px 16px;
+  cursor:pointer; font-size:14.5px; color:var(--ink); display:flex; gap:12px; align-items:baseline}
+.ovitem:hover{border-color:var(--crim)}
+.ovitem b{color:var(--crim); font-variant-numeric:tabular-nums}
+.ovitem.cur{border-color:var(--crim); background:#FCF2F6}
+.hint{position:fixed; right:18px; top:16px; font-size:12px; color:var(--faint); z-index:20}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+<div id="stagewrap"><div id="stage">
+
+<section class="slide cover" data-title="Det relationelle database - DataTyper">
+  <div class="cover-bars" aria-hidden="true"><i class="b1"></i><i class="b2"></i></div>
+  <p class="kicker">Database og MySQL &middot; Gang 3</p>
+  <h1>Det relationelle database<br>&ndash; DataTyper</h1>
+  <p class="who">xbi@2025</p>
+</section>
+
+<section class="slide titleonly" data-title="Opgave: Gennemg&aring;">
+  <p class="kicker">Opgave</p>
+  <p class="bigt">Gennemg&aring;</p>
+  <p class="sub">&Oslash;velse 3</p>
+  <div class="rule"></div>
+</section>
+
+<section class="slide titleonly" data-title="Fordelene ved et DBMS frem for et Excel-ark">
+  <p class="bigt">Fordelene ved at bruge et DBMS (Database Management System) frem for et Excel-ark</p>
+  <div class="rule"></div>
+</section>
+
+<section class="slide" data-title="Hvad er SQL?">
+  <header class="head"><p class="kicker">Grundlagt</p><h2>Hvad er SQL?</h2><div class="rule"></div></header>
+  <div class="prose">
+    <p><strong>SQL = Structured Query Language.</strong> Bruges til at gemme, manipulere og hente data i relationelle databaser. Underst&oslash;ttes af systemer som MySQL, MS Access, Oracle m.fl.</p>
+  </div>
+</section>
+
+<section class="slide" data-title="MySQL og WorkBench">
+  <header class="head"><p class="kicker">V&aelig;rkt&oslash;j</p><h2>MySQL og WorkBench</h2><div class="rule"></div></header>
+  <div class="twocol">
+    <div class="figw"><img class="fig logo" src="img_gang3/p05-mysql-logo.png" alt="MySQL-logo"></div>
+    <div>
+      <p class="lnk"><a href="https://dev.mysql.com/doc/refman/8.4/en/" target="_blank" rel="noopener">https://dev.mysql.com/doc/refman/8.4/en/</a></p>
+      <p style="margin-top:22px; font-size:18px; color:var(--muted)">(der er nogen har nyere version)</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide titleonly" data-title="Forskel p&aring; SQL og MySQL?">
+  <p class="bigt">Er der nogen forskel mellem SQL og MySQL?</p>
+  <div class="rule"></div>
+</section>
+
+<section class="slide" data-title="Agenda">
+  <header class="head"><p class="kicker">Overblik</p><h2>Agenda</h2><div class="rule"></div></header>
+  <ol class="numlist">
+    <li><span class="n">1</span><div><h3>Datatyper i MySQL</h3></div></li>
+    <li><span class="n">2</span><div><h3>SQL-syntaks og konventioner</h3></div></li>
+    <li><span class="n">3</span><div><h3>SQL-kommandoer</h3></div></li>
+    <li><span class="n">4</span><div><h3>Opgave</h3></div></li>
+  </ol>
+</section>
+
+<section class="slide" data-title="Relationelle n&oslash;gler">
+  <header class="head"><p class="kicker">Grundlag</p><h2>Relationelle n&oslash;gler</h2><div class="rule"></div></header>
+  <div class="twocol cards">
+    <div class="card crim">
+      <h3>Prim&aelig;rn&oslash;gle</h3>
+      <p>Identificerer den enkelte post i databasen. Vi siger ogs&aring;, at prim&aelig;rn&oslash;glen g&oslash;r hver post i tabellen <strong>unik</strong>.</p>
+    </div>
+    <div class="card cyan">
+      <h3>Fremmedn&oslash;gle</h3>
+      <p>En fremmedn&oslash;gle refererer til prim&aelig;rn&oslash;glen i en anden tabel og forbinder data p&aring; tv&aelig;rs af tabeller.</p>
+    </div>
+  </div>
+  <span class="srcnote">s. 8</span>
+</section>
+
+<section class="slide" data-title="Relationelle n&oslash;gler - eksempel">
+  <header class="head"><p class="kicker">Eksempel</p><h2>Customer &amp; Order</h2><div class="rule"></div></header>
+  <div class="figw"><img class="fig mid" src="img_gang3/p09-keys-pk-fk.png" alt="Customer- og Order-tabel med PK customer_id og FK customer_id"></div>
+  <p class="isbn">11/10/2025</p>
+  <span class="srcnote">s. 9</span>
+</section>
+
+<section class="slide bleed bd-light" data-title="Data type I MySQL">
+  <img class="fill" src="img_gang3/p10-datatyper-mindmap.png" alt="H&aring;ndtegnet mindmap over datatyper: Numerisk, Dato/tid, Bogstav/symboler, String og Bin&aelig;r">
+  <div class="band">Data type I MySQL</div>
+</section>
+
+<section class="slide" data-title="Null">
+  <header class="head"><p class="kicker">Datatyper</p><h2>Null</h2><div class="rule"></div></header>
+  <div class="prose">
+    <p><strong>Null</strong> repr&aelig;senterer en v&aelig;rdi, der er ukendt eller har ingen v&aelig;rdi.</p>
+    <blockquote><strong>Tips:</strong> NULL bruges ofte til valgfri felter, hvor man ikke altid har data. Kolonner, der ikke m&aring; v&aelig;re tomme, s&aelig;ttes til NOT NULL (SQL).</blockquote>
+  </div>
+  <span class="srcnote">s. 11</span>
+</section>
+
+<section class="slide" data-title="Data Type reference">
+  <header class="head"><p class="kicker">Reference</p><h2>Data Type reference</h2><div class="rule"></div></header>
+  <div class="prose">
+    <p>Se den officielle oversigt over datatyper hos W3Schools.</p>
+    <p class="lnk"><a href="https://www.w3schools.com/mysql/mysql_datatypes.asp" target="_blank" rel="noopener">https://www.w3schools.com/mysql/mysql_datatypes.asp</a></p>
+  </div>
+</section>
+
+<section class="slide" data-title="Table city - find datatyper">
+  <header class="head"><p class="kicker">&Oslash;velse</p><h2>Table city &ndash; find datatyper</h2><div class="rule"></div></header>
+  <div class="prose">
+    <p>Open sample DB <strong>world-mysql.sql</strong> &ndash; unders&oslash;g tabellen <strong>city</strong>, og find datatyperne.</p>
+    <p class="lnk"><a href="https://www.w3schools.com/mysql/mysql_datatypes.asp" target="_blank" rel="noopener">https://www.w3schools.com/mysql/mysql_datatypes.asp</a></p>
+  </div>
+</section>
+
+<section class="slide" data-title="DB/Skema World -&gt; Table city">
+  <header class="head"><p class="kicker">Eksempel</p><h2>DB/Skema World &rarr; Table city</h2><div class="rule"></div></header>
+  <div class="codeblock"><pre class="code">CountryCode (char 3)</pre></div>
+</section>
+
+<section class="slide" data-title="Se table track title">
+  <header class="head"><p class="kicker">&Oslash;velse</p><h2>Se table track title</h2><div class="rule"></div></header>
+  <div class="prose"><p>Open sample DB <strong>Albumn</strong> &ndash; se tabellen <strong>track</strong>, kolonnen <strong>title</strong>.</p></div>
+</section>
+
+<section class="slide" data-title="Open sample DB-scratch.sql - table sale">
+  <header class="head"><p class="kicker">&Oslash;velse</p><h2>Table sale &ndash; id, price</h2><div class="rule"></div></header>
+  <div class="prose"><p>Open sample DB <strong>scratch.sql</strong> &ndash; se tabellen <strong>sale</strong> med felterne <strong>id</strong> og <strong>price</strong>.</p></div>
+</section>
+
+<section class="slide bleed bd-dark" data-title="INT - whole numbers">
+  <img class="fill" src="img_gang3/p17-int-whole-numbers.png" alt="INT - WHOLE NUMBERS, lys bl&aring; skrift p&aring; m&oslash;rk baggrund">
+</section>
+
+<section class="slide" data-title="DECIMAL(10,4)">
+  <header class="head"><p class="kicker">Datatyper</p><h2>DECIMAL</h2><div class="rule"></div></header>
+  <div class="figw"><img class="fig tall" src="img_gang3/p18-decimal.jpg" alt="DECIMAL(10,4): Precision = 10, Scale = 4, eksempel 654321.1234"></div>
+</section>
+
+<section class="slide" data-title="Open sample DB-albumn - table albumn released">
+  <header class="head"><p class="kicker">&Oslash;velse</p><h2>Table albumn &ndash; released</h2><div class="rule"></div></header>
+  <div class="prose"><p>Open sample DB <strong>albumn</strong> &ndash; se tabellen <strong>albumn</strong>, kolonnen <strong>released</strong>.</p></div>
+</section>
+
+<section class="slide bleed bd-dark" data-title="Storing Dates and Times">
+  <img class="fill" src="img_gang3/p20-dates-times.jpg" alt="Storing Dates and Times: DATE, DATETIME og TIMESTAMP">
+</section>
+
+<section class="slide titleonly" data-title="MySQL - syntaks">
+  <p class="bigt">MySQL &ndash; syntaks</p>
+  <div class="rule"></div>
+  <p class="isbn" style="position:static; margin-top:34px">Pearson Education &copy; 2014</p>
+</section>
+
+<section class="slide" data-title="MySQL">
+  <header class="head"><p class="kicker">Syntaks</p><h2>MySQL</h2><div class="rule"></div></header>
+  <div class="prose">
+    <p>MySQL er relativt let at l&aelig;re: det er <strong>ikke-proceduralt</strong> &ndash; du angiver, hvilken information du har brug for, i stedet for hvordan den skal hentes.</p>
+  </div>
+  <p class="isbn">Pearson Education &copy; 2014</p>
+  <span class="srcnote">s. 22</span>
+</section>
+
+<section class="slide" data-title="Skriv MySQL">
+  <header class="head"><p class="kicker">Syntaks</p><h2>Skriv MySQL</h2><div class="rule"></div></header>
+  <div class="prose">
+    <p>En SQL-s&aelig;tning best&aring;r af <strong>reserverede ord</strong> og <strong>brugerdefinerede ord</strong>. &raquo;Keywords&laquo; er en fast del af SQL og skal staves n&oslash;jagtigt som foreskrevet &ndash; f.eks. SELECT, DELETE eller BIGINT.</p>
+    <p class="lnk"><a href="https://docs.oracle.com/cd/E17952_01/mysql-8.0-en/keywords.html" target="_blank" rel="noopener">Kilder: https://docs.oracle.com/cd/E17952_01/mysql-8.0-en/keywords.html</a></p>
+  </div>
+  <span class="srcnote">s. 23</span>
+</section>
+
+<section class="slide" data-title="Reserveret Ord">
+  <header class="head"><p class="kicker">Syntaks</p><h2>Reserveret Ord</h2><div class="rule"></div></header>
+  <div class="prose">
+    <p>Hvis du har en brugerdefineret tabel eller kolonne, der indeholder et reserveret ord i SQL, kan du stadig bruge det &ndash; men du skal s&aelig;tte navnet i backticks (<code>`</code>) i MySQL.</p>
+  </div>
+  <div class="codeblock"><pre class="code">CREATE TABLE `order` (
+  `id` INT PRIMARY KEY,
+  `customer` VARCHAR(100),
+  `amount` DECIMAL(10,2)
+);</pre></div>
+</section>
+
+<section class="slide" data-title="Navngivningskonvention">
+  <header class="head"><p class="kicker">Syntaks</p><h2>Navngivningskonvention</h2><div class="rule"></div></header>
+  <div class="twocol cards">
+    <div class="card crim">
+      <h3>STORE BOGSTAVER</h3>
+      <p>Repr&aelig;senterer reserverede ord (f.eks. SELECT, INSERT, WHERE)</p>
+    </div>
+    <div class="card cyan">
+      <h3>sm&aring; bogstaver</h3>
+      <p>Repr&aelig;senterer brugerdefinerede ord (f.eks. tabelnavne og kolonnenavne: kunde, ordre, pris)</p>
+    </div>
+  </div>
+  <p class="isbn">Pearson Education &copy; 2014</p>
+  <span class="srcnote">s. 25</span>
+</section>
+
+<section class="slide" data-title="SQL Literals">
+  <header class="head"><p class="kicker">Syntaks</p><h2>SQL Literals</h2><div class="rule"></div></header>
+  <div class="twocol cards">
+    <div class="card">
+      <h3>Regler</h3>
+      <p>Ikke-numeriske literaler skal v&aelig;re omgivet af enkeltanf&oslash;rselstegn (f.eks. &rsquo;London&rsquo;).</p>
+      <p style="margin-top:10px">Numeriske literaler m&aring; ikke v&aelig;re omgivet af anf&oslash;rselstegn.</p>
+    </div>
+    <div class="codeblock" style="margin-top:0"><pre class="code">-- Non-numeric literal (string)
+SELECT * FROM kunder WHERE by = 'London';
+
+-- Numeric literal
+SELECT * FROM ordre WHERE bel&oslash;b &gt; 650;</pre></div>
+  </div>
+  <p class="isbn">Pearson Education &copy; 2014</p>
+  <span class="srcnote">s. 26</span>
+</section>
+
+<section class="slide titleonly" data-title="SQL HandsON">
+  <p class="bigt">SQL HandsON</p>
+  <div class="rule"></div>
+</section>
+
+<section class="slide" data-title="Create DB">
+  <header class="head"><p class="kicker">SQL-kommandoer</p><h2>Create DB</h2><div class="rule"></div></header>
+  <div class="prose"><p>Syntax: <strong>CREATE DATABASE databasename;</strong></p></div>
+  <div class="codeblock"><pre class="code">CREATE DATABASE sales1;</pre></div>
+</section>
+
+<section class="slide" data-title="Create TABLE">
+  <header class="head"><p class="kicker">SQL-kommandoer</p><h2>Create TABLE</h2><div class="rule"></div></header>
+  <div class="codeblock"><pre class="code">CREATE TABLE kunder (
+  kundenr INT AUTO_INCREMENT PRIMARY KEY,
+  navn VARCHAR(50),
+  gade VARCHAR(30),
+  postnr INT(4),
+  email VARCHAR(50),
+  mobil INT(8)
+);</pre></div>
+</section>
+
+<section class="slide" data-title="INSERT">
+  <header class="head"><p class="kicker">SQL</p><h2>INSERT</h2></header>
+  <div class="prose">
+    <p>Her er den generelle SQL-syntaks for INSERT INTO-kommandoen til at inds&aelig;tte data i en MySQL-tabel:</p>
+    <div class="code" style="margin:22px 0">INSERT INTO table_name ( field1, field2,...fieldN )  VALUES ( value1, value2,...valueN );</div>
+    <blockquote>To insert string data types, it is required to keep all the values in single quote, for example:- 'value'</blockquote>
+  </div>
+</section>
+
+<section class="slide" data-title="Null">
+  <header class="head"><p class="kicker">SQL</p><h2>Null</h2></header>
+  <div class="code" style="margin-top:10px">INSERT INTO table_name ( field1, field2,...fieldN )  VALUES ( value1, value2,...NULL );</div>
+</section>
+
+<section class="slide titleonly" data-title="How to see the result?">
+  <p class="kicker">SQL</p>
+  <h2 class="bigt">How to see the result?</h2>
+  <div class="rule"></div>
+</section>
+
+<section class="slide" data-title="SELECT * FROM kunder;">
+  <p class="kicker">SQL</p>
+  <div class="figw"><pre class="code" style="font-size:32px; padding:44px 56px; border-radius:18px">SELECT * FROM kunder;</pre></div>
+</section>
+
+<section class="slide" data-title="&oslash;velse &ndash; database">
+  <header class="head"><p class="kicker">&Oslash;velse</p><h2>&oslash;velse-database</h2></header>
+  <div class="exgrid">
+    <div class="excard">
+      <h3>Skoledatabase</h3>
+      <p>I skal betragte skoledatabase med tre tabeller for Kursus, Elever og L&aelig;rere.</p>
+      <p style="margin-top:14px"><strong>Hvilke n&oslash;glefelter skal der v&aelig;re i de enkelte tabeller?</strong></p>
+      <p style="margin-top:6px"><strong>Hvilken datatype i de enkelte tabeller?</strong></p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-title="SchoolDB challenge">
+  <span class="srcnote">Uge46.docx</span>
+  <header class="head">
+    <p class="kicker">Udfordring</p>
+    <h2>SchoolDB challenge <span class="en">og ekstra challenge</span></h2>
+    <p style="font-size:20px; color:var(--muted); margin-top:12px">topic til unders&oslash;ge</p>
+  </header>
+  <div class="exgrid" style="grid-template-columns:1fr 1fr; align-content:center">
+    <div class="excard"><h3>SchoolDB challenge</h3></div>
+    <div class="excard"><h3>Ekstra challenge</h3><p>topic til unders&oslash;ge</p></div>
+  </div>
+</section>
+
+<section class="slide" data-title="Quiz: Test din viden om databaser">
+  <header class="head"><p class="kicker">Quiz</p><h2>Test din viden om databaser</h2></header>
+  <div class="quiz">
+    <div class="q"><p class="qt">Hvad er forskellen p&aring; en prim&aelig;rn&oslash;gle og en fremmedn&oslash;gle?</p>
+      <p class="qo"><span>A) De bruges til at sortere data</span><span>B) Prim&aelig;rn&oslash;glen identificerer en post, fremmedn&oslash;glen skaber relationer</span><span>C) De er begge valgfri</span></p></div>
+    <div class="q"><p class="qt">Hvilken datatype bruges til tekst i MySQL?</p>
+      <p class="qo"><span>A) INT</span><span>B) VARCHAR</span><span>C) DATE</span></p></div>
+    <div class="q"><p class="qt">Hvad betyder NULL i en database?</p>
+      <p class="qo"><span>A) En tom streng</span><span>B) En ukendt eller manglende v&aelig;rdi</span><span>C) En fejl</span></p></div>
+    <div class="q"><p class="qt">Hvordan skriver man en SQL-s&aelig;tning for at hente alle r&aelig;kker fra en tabel?</p>
+      <p class="qo"><span>A) SELECT ALL FROM table;</span><span>B) GET * FROM table;</span><span>C) SELECT * FROM table;</span></p></div>
+    <div class="q"><p class="qt">Hvad skal man g&oslash;re, hvis man vil bruge et reserveret ord som tabelnavn?</p>
+      <p class="qo"><span>A) Undg&aring; det</span><span>B) S&aelig;tte det i backticks (`)</span><span>C) Skrive det med sm&aring; bogstaver</span></p></div>
+  </div>
+</section></div></div>
+<div id="ui"><div id="bar">
+  <button id="prev" title="Forrige (←)">&#8592;</button>
+  <span id="counter">01 / 36</span>
+  <button id="next" title="Næste (→)">&#8594;</button>
+  <button id="ovbtn" title="Oversigt (O)">Oversigt</button>
+  <button id="fsbtn" title="Fuld skærm (F)">Fuld skærm</button>
+</div></div>
+<div id="ov"><h4>Oversigt &ndash; 36 slides</h4><div id="ovgrid"></div>
+<button id="ovclose" class="ovitem" style="margin-top:14px">Luk oversigten</button></div>
+<p class="hint">&larr; &rarr; naviger &middot; O oversigt &middot; F fuld sk&aelig;rm</p>
+
+<script>
+(function(){
+  var stage = document.getElementById('stage');
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var counter = document.getElementById('counter');
+  var progress = document.getElementById('progress');
+  var ov = document.getElementById('ov');
+  var ovgrid = document.getElementById('ovgrid');
+  var N = slides.length;
+  var cur = 0;
+
+  function fit(){
+    var s = Math.min(window.innerWidth/1330, window.innerHeight/800);
+    stage.style.transform = 'scale(' + s + ')';
+  }
+  window.addEventListener('resize', fit); fit();
+
+  function pad(n){ return (n<10?'0':'') + n; }
+
+  function show(i){
+    cur = Math.max(0, Math.min(N-1, i));
+    slides.forEach(function(el,k){ el.classList.toggle('active', k===cur); });
+    counter.textContent = pad(cur+1) + ' / ' + pad(N);
+    progress.style.width = ((cur+1)/N*100) + '%';
+    try{ history.replaceState(null, '', '#/' + (cur+1)); }catch(e){}
+    Array.prototype.forEach.call(ovgrid.children, function(el,k){ el.classList.toggle('cur', k===cur); });
+  }
+
+  function next(){ show(cur+1); }
+  function prev(){ show(cur-1); }
+
+  document.getElementById('next').addEventListener('click', next);
+  document.getElementById('prev').addEventListener('click', prev);
+  document.getElementById('ovbtn').addEventListener('click', function(){ ov.classList.toggle('open'); });
+  document.getElementById('ovclose').addEventListener('click', function(){ ov.classList.remove('open'); });
+  document.getElementById('fsbtn').addEventListener('click', function(){
+    if(document.fullscreenElement){ document.exitFullscreen(); }
+    else{ document.documentElement.requestFullscreen(); }
+  });
+
+  slides.forEach(function(el, k){
+    var b = document.createElement('button');
+    b.className = 'ovitem';
+    b.innerHTML = '<b>' + pad(k+1) + '</b><span>' + (el.getAttribute('data-title') || '') + '</span>';
+    b.addEventListener('click', function(){ show(k); ov.classList.remove('open'); });
+    ovgrid.appendChild(b);
+  });
+
+  document.addEventListener('keydown', function(e){
+    if(e.key==='ArrowRight' || e.key==='PageDown' || e.key===' '){ e.preventDefault(); next(); }
+    else if(e.key==='ArrowLeft' || e.key==='PageUp'){ e.preventDefault(); prev(); }
+    else if(e.key==='Home'){ show(0); }
+    else if(e.key==='End'){ show(N-1); }
+    else if(e.key==='o' || e.key==='O'){ ov.classList.toggle('open'); }
+    else if(e.key==='f' || e.key==='F'){ document.getElementById('fsbtn').click(); }
+    else if(e.key==='Escape'){ ov.classList.remove('open'); }
+  });
+
+  var tx = null;
+  stage.addEventListener('touchstart', function(e){ tx = e.touches[0].clientX; }, {passive:true});
+  stage.addEventListener('touchend', function(e){
+    if(tx===null) return;
+    var dx = e.changedTouches[0].clientX - tx;
+    if(dx < -50) next(); else if(dx > 50) prev();
+    tx = null;
+  }, {passive:true});
+
+  var h = (location.hash.match(/^#\/(\d+)$/) || [])[1];
+  show(h ? parseInt(h,10)-1 : 0);
+})();
+</script>
+
+</body>
+</html>
